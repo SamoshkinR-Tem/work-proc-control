@@ -1,6 +1,7 @@
 package app.tools;
 
 import app.WorkController;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 
@@ -16,18 +17,30 @@ public class LockScreenTask extends java.util.TimerTask {
     private static final String SHUTDOWN_WIN = "shutdown.exe -s -t 0";
     private static final String MESSAGE = "Unsupported operating system.";
 
+    static final Logger logger = Logger.getLogger(LockScreenTask.class);
+
     @Override
     public void run() {
+        logger.info("run()");
         try {
             if (doAction(LOCK_SCREEN)) {
-                WorkController.onScreenSaverStarted();
+                WorkController.onScreenSaverStarted(true);
+            } else {
+                System.out.println("Ups! Something went wrong! :(");
+                WorkController.onScreenSaverStarted(false);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public boolean doAction(int action) throws RuntimeException, IOException {
+    boolean doAction(int action) throws RuntimeException, IOException {
+        switch (action) {
+            case LOCK_SCREEN:
+                logger.info("doAction(): action: LOCK_SCREEN");
+            case SHUTDOWN:
+                logger.info("doAction(): action: SHUTDOWN");
+        }
         boolean os = checkOS();
         Runtime r = Runtime.getRuntime();
         String command = getCommand(os, action);
@@ -41,8 +54,9 @@ public class LockScreenTask extends java.util.TimerTask {
         }
     }
 
-    public boolean checkOS() {
+    boolean checkOS() {
         String operatingSystem = System.getProperty("os.name");
+        logger.info("checkOS(): os: " + operatingSystem);
 
         if ("Linux".equals(operatingSystem) || "Mac OS X".equals(operatingSystem)) {
             return LINUX_OR_MAC;
@@ -53,19 +67,21 @@ public class LockScreenTask extends java.util.TimerTask {
         }
     }
 
-    public String getCommand(boolean os, int action) {
+    String getCommand(boolean os, int action) {
         String command;
         switch (action) {
             case SHUTDOWN:
                 if (os) command = SHUTDOWN_LIN;
                 else command = SHUTDOWN_WIN;
-                return command;
+                break;
             case LOCK_SCREEN:
                 if (os) command = LOCK_SCREEN_LIN;
                 else command = LOCK_SCREEN_WIN;
-                return command;
+                break;
             default:
-                return MESSAGE;
+                command = MESSAGE;
         }
+        logger.info("getCommand(): command: " + command);
+        return command;
     }
 }

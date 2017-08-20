@@ -1,6 +1,7 @@
 package app.tools;
 
 import app.WorkController;
+import org.apache.log4j.Logger;
 
 import java.io.*;
 
@@ -22,18 +23,21 @@ public class Checker {
     private static final int EXPECTED_EXIT_CODE = 0;
     private static final String ACTIVE = "включёна";
 
-    public static boolean isScreenSaverActive() {
-        boolean is_active = false;
+    static final Logger logger = Logger.getLogger(Checker.class);
+
+    static boolean isScreenSaverActive() {
+        boolean isActive = false;
         final Runtime r = Runtime.getRuntime();
         try {
             Process p = r.exec(COMMAND_IS_SS_ACTIVE);
             String output[] = readTheLsOutput(p);
-            for (String s : output) if (s.contains(ACTIVE)) is_active = true;
+            for (String s : output) if (s.contains(ACTIVE)) isActive = true;
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
-        System.out.println(is_active);
-        return is_active;
+        System.out.println(isActive);
+        logger.info("isScreenSaverActive(): isActive: " + isActive);
+        return isActive;
     }
 
     boolean isUserLoggedIn(String userName) {
