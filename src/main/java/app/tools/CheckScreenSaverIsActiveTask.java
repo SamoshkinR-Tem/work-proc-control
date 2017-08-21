@@ -10,6 +10,5 @@ public class CheckScreenSaverIsActiveTask extends TimerTask {
     @Override
     public void run() {
         WorkController.setScreenSaverIsActive(Checker.isScreenSaverActive());
-        System.out.println(new Timestamp(System.currentTimeMillis()));
     }
 }

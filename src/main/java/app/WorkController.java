@@ -11,7 +11,7 @@ import java.util.Timer;
 public class WorkController {
 
     private static final String START = "Start";
-    private static final Long WORK_INTERVAL = 30000L; // 50 min
+    private static final Long WORK_INTERVAL = 10000L; // 50 min
     public static final String ARTEM = "artem";
 
     private static boolean wasActive = false;
@@ -20,27 +20,27 @@ public class WorkController {
     private Timer timer;
 
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH.mm");
-    public static final Logger logger = Logger.getLogger(WorkController.class);
+    private static final Logger logger = Logger.getLogger(WorkController.class);
 
     public static void main(String[] args) {
         logger.info("main()");
 
         wc = new WorkController(START);
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        System.out.println("Hi! This is Your Work Controller!\n" +
-                "It is " + sdf.format(timestamp) + " now\n" +
-                "We will activate ScreenSaver in 50 min\n" +
-                "Have an awesome day and be happy!");
+        System.out.println("      --- Hi! This is Your Work Controller! ---\n" +
+                "        -----It is " + sdf.format(timestamp) + " now -----\n" +
+                "   ==== We will activate ScreenSaver in 50 min ====\n" +
+                "      === Have an awesome day and be happy! ===");
     }
 
     private WorkController(String s) {
-        logger.info("WorkController(): param: " + s);
+        logger.info("WorkController() param: " + s);
 
         if (s.matches(START)) startTimer(WORK_INTERVAL);
     }
 
     private void startTimer(Long delay) {
-        logger.info("startTimer(): delay: " + delay);
+        logger.info("startTimer() delay: " + delay);
 
         if (timer != null) timer.cancel();
 
@@ -55,12 +55,12 @@ public class WorkController {
     }
 
     public static void onScreenSaverStarted(boolean isStarted) {
-        logger.info("onScreenSaverStarted(): started: " + isStarted);
+        logger.info("onScreenSaverStarted() started: " + isStarted);
         wc.startChecker();
     }
 
     private void startChecker() {
-        logger.info("startChecker()");
+        logger.info("startChecker() wasActive:" + wasActive);
         if (timer != null) timer.cancel();
         timer = new Timer();
         CheckScreenSaverIsActiveTask checkScreenSaverIsActiveTask = new CheckScreenSaverIsActiveTask();
@@ -69,6 +69,6 @@ public class WorkController {
 
     public static void setScreenSaverIsActive(boolean isActive) {
         if ((!wasActive && !isActive) || (wasActive && !isActive)) wc.startTimer(WORK_INTERVAL);
-        else wasActive = true;
+        wasActive = isActive;
     }
 }

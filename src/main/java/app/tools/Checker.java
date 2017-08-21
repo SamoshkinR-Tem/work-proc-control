@@ -35,8 +35,7 @@ public class Checker {
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
-        System.out.println(isActive);
-        logger.info("isScreenSaverActive(): isActive: " + isActive);
+        logger.info("isScreenSaverActive() isActive: " + isActive);
         return isActive;
     }
 

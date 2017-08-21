@@ -21,7 +21,6 @@ public class LockScreenTask extends java.util.TimerTask {
 
     @Override
     public void run() {
-        logger.info("run()");
         try {
             if (doAction(LOCK_SCREEN)) {
                 WorkController.onScreenSaverStarted(true);
@@ -37,9 +36,11 @@ public class LockScreenTask extends java.util.TimerTask {
     boolean doAction(int action) throws RuntimeException, IOException {
         switch (action) {
             case LOCK_SCREEN:
-                logger.info("doAction(): action: LOCK_SCREEN");
+                logger.info("doAction() action: LOCK_SCREEN");
+                break;
             case SHUTDOWN:
-                logger.info("doAction(): action: SHUTDOWN");
+                logger.info("doAction() action: SHUTDOWN");
+                break;
         }
         boolean os = checkOS();
         Runtime r = Runtime.getRuntime();
@@ -56,7 +57,7 @@ public class LockScreenTask extends java.util.TimerTask {
 
     boolean checkOS() {
         String operatingSystem = System.getProperty("os.name");
-        logger.info("checkOS(): os: " + operatingSystem);
+        logger.info("checkOS() os: " + operatingSystem);
 
         if ("Linux".equals(operatingSystem) || "Mac OS X".equals(operatingSystem)) {
             return LINUX_OR_MAC;
@@ -81,7 +82,7 @@ public class LockScreenTask extends java.util.TimerTask {
             default:
                 command = MESSAGE;
         }
-        logger.info("getCommand(): command: " + command);
+        logger.info("getCommand() command: " + command);
         return command;
     }
 }
