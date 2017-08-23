@@ -11,7 +11,7 @@ import java.util.Timer;
 public class WorkController {
 
     private static final String START = "Start";
-    private static final Long WORK_INTERVAL = 50000L; // 50 min
+    private static final Long WORK_INTERVAL = 500000L; // 50 min
 
     private static boolean wasActive = false;
 
