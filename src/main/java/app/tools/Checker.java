@@ -1,11 +1,10 @@
 package app.tools;
 
-import app.WorkController;
 import org.apache.log4j.Logger;
 
 import java.io.*;
 
-public class Checker {
+class Checker {
 
   /*
    * Pipes are a shell feature, so you have to open a shell first.
@@ -17,13 +16,11 @@ public class Checker {
 
     private static final String COMMAND_IS_SS_ACTIVE =
             "gnome-screensaver-command -q |  grep -q 'is active'";
-    private static final String COMMAND_IS_USER_LOGGED =
-            "who";
 
     private static final int EXPECTED_EXIT_CODE = 0;
     private static final String ACTIVE = "включёна";
 
-    static final Logger logger = Logger.getLogger(Checker.class);
+    private static final Logger logger = Logger.getLogger(Checker.class);
 
     static boolean isScreenSaverActive() {
         boolean isActive = false;
@@ -37,20 +34,6 @@ public class Checker {
         }
         logger.info("isScreenSaverActive() isActive: " + isActive);
         return isActive;
-    }
-
-    boolean isUserLoggedIn(String userName) {
-        boolean isLogged = false;
-        final Runtime r = Runtime.getRuntime();
-        try {
-            Process p = r.exec(COMMAND_IS_USER_LOGGED);
-            String output[] = readTheLsOutput(p);
-            for (String s : output) if (s.contains(WorkController.ARTEM)) isLogged = true;
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-        }
-        return isLogged;
-
     }
 
     private static String[] readTheLsOutput(Process p) {

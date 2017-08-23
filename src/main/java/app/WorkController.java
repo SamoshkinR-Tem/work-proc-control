@@ -11,8 +11,7 @@ import java.util.Timer;
 public class WorkController {
 
     private static final String START = "Start";
-    private static final Long WORK_INTERVAL = 10000L; // 50 min
-    public static final String ARTEM = "artem";
+    private static final Long WORK_INTERVAL = 50000L; // 50 min
 
     private static boolean wasActive = false;
 
@@ -36,11 +35,11 @@ public class WorkController {
     private WorkController(String s) {
         logger.info("WorkController() param: " + s);
 
-        if (s.matches(START)) startTimer(WORK_INTERVAL);
+        if (s.matches(START)) startLockScreenTimer(WORK_INTERVAL);
     }
 
-    private void startTimer(Long delay) {
-        logger.info("startTimer() delay: " + delay);
+    private void startLockScreenTimer(Long delay) {
+        logger.info("startLockScreenTimer() delay: " + delay);
 
         if (timer != null) timer.cancel();
 
@@ -56,19 +55,21 @@ public class WorkController {
 
     public static void onScreenSaverStarted(boolean isStarted) {
         logger.info("onScreenSaverStarted() started: " + isStarted);
-        wc.startChecker();
+        wc.startCheckerTimer();
     }
 
-    private void startChecker() {
-        logger.info("startChecker() wasActive:" + wasActive);
+    private void startCheckerTimer() {
+        logger.info("startCheckerTimer()");
         if (timer != null) timer.cancel();
         timer = new Timer();
         CheckScreenSaverIsActiveTask checkScreenSaverIsActiveTask = new CheckScreenSaverIsActiveTask();
-        timer.schedule(checkScreenSaverIsActiveTask, 10000, 10000);
+        timer.schedule(checkScreenSaverIsActiveTask, 15000, 10000);
     }
 
-    public static void setScreenSaverIsActive(boolean isActive) {
-        if ((!wasActive && !isActive) || (wasActive && !isActive)) wc.startTimer(WORK_INTERVAL);
+    public static void makeChoice(boolean isActive) {
+        logger.info("makeChoice() wasActive: " + wasActive +
+                " become: " + isActive);
+        if ((!wasActive && !isActive) || (wasActive && !isActive)) wc.startLockScreenTimer(WORK_INTERVAL);
         wasActive = isActive;
     }
 }

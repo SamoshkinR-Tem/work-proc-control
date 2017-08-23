@@ -7,8 +7,10 @@ import java.io.IOException;
 
 public class LockScreenTask extends java.util.TimerTask {
 
-    static final int LOCK_SCREEN = 0;
+    private static final int EXPECTED_EXIT_CODE = 0;
+    private static final long FIVE_SEC = 5000L;
     static final int SHUTDOWN = 1;
+    static final int LOCK_SCREEN = 0;
     static final boolean LINUX_OR_MAC = true;
     static final boolean WINDOWS = false;
     static final String LOCK_SCREEN_LIN = "gnome-screensaver-command -l";
@@ -17,7 +19,7 @@ public class LockScreenTask extends java.util.TimerTask {
     private static final String SHUTDOWN_WIN = "shutdown.exe -s -t 0";
     private static final String MESSAGE = "Unsupported operating system.";
 
-    static final Logger logger = Logger.getLogger(LockScreenTask.class);
+    private static final Logger logger = Logger.getLogger(LockScreenTask.class);
 
     @Override
     public void run() {
@@ -47,8 +49,14 @@ public class LockScreenTask extends java.util.TimerTask {
         String command = getCommand(os, action);
 
         try {
-            r.exec(command);
-            return true;
+            Process p = r.exec(command);
+            try {
+                return p.waitFor() == EXPECTED_EXIT_CODE;
+            } catch (InterruptedException e) {
+                System.err.println("exit value = " + p.exitValue());
+                e.printStackTrace();
+                return false;
+            }
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -56,12 +64,12 @@ public class LockScreenTask extends java.util.TimerTask {
     }
 
     boolean checkOS() {
-        String operatingSystem = System.getProperty("os.name");
-        logger.info("checkOS() os: " + operatingSystem);
+        String osName = System.getProperty("os.name");
+        logger.info("checkOS() os: " + osName);
 
-        if ("Linux".equals(operatingSystem) || "Mac OS X".equals(operatingSystem)) {
+        if (osName.startsWith("Linux") || osName.startsWith("Mac")) {
             return LINUX_OR_MAC;
-        } else if ("Windows".equals(operatingSystem)) {
+        } else if (osName.startsWith("Win")) {
             return WINDOWS;
         } else {
             throw new RuntimeException(MESSAGE);
